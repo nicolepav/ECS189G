@@ -15,7 +15,7 @@ class dataset:
              dataset_description: the textual description of the dataset
     """
     
-    dataset_name = None
+    dataset_name = "train.csv"
     dataset_descrition = None
     
     dataset_source_folder_path = None

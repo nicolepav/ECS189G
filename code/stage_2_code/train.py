@@ -30,7 +30,7 @@ if 1:
     # ---- Objection Initialization Section ---------------
     data_obj = Dataset_Loader('Training Set',
                                     '60,000 lines: label {0, 1, 2, ..., 9}, feature_1, feature_2, ..., feature_784')
-    data_obj.dataset_source_folder_path = 'data/'
+    data_obj.dataset_source_folder_path = 'code/stage_2_code/data/'
     data_obj.dataset_source_file_name = 'train.csv'
 
     layers_data = [
