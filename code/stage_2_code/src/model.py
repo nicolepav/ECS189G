@@ -1,4 +1,4 @@
- '''
+''
 MethodModule class for Multi-Layer Perceptron model on Classification Task
 '''
 
@@ -17,14 +17,15 @@ class MLP(method, nn.Module):
     '''
 
     # Initialization function
-    def __init__(self, input_size, layers_data, learning_rate=0.01, optimizer=torch.optim.Adam,
-                 loss_function=nn.CrossEntropyLoss(), epoch=500):
+    def __init__(self, input_size, layers_data, learning_rate=0.001, optimizer=torch.optim.Adam,
+                 loss_function=nn.CrossEntropyLoss(), epoch=500, training_loss = []):
         super(MLP, self).__init__("Multi-Layer Perceptron", "Classification Task")
         nn.Module.__init__(self)
 
         # Construct layers
         self.input_size = input_size
         self.layers = nn.ModuleList()
+        self.training_loss = []
         for neuron_size, activation in layers_data:
             self.layers.append(nn.Linear(input_size, neuron_size))
             input_size = neuron_size
@@ -49,7 +50,7 @@ class MLP(method, nn.Module):
     # Train function
     def train(self, X, y):
         # Initialize optimizer and evaluator
-        minibatch = 2000
+        minibatch = 6000
         accuracy_evaluator = Evaluate_Accuracy('training evaluator', '')
 
         # An iterative gradient updating process without mini-batch
@@ -70,11 +71,31 @@ class MLP(method, nn.Module):
 
                 # Update the variables according to the optimizer and the gradients calculated by the above loss function
                 self.optimizer.step()
-                self.training_loss.append(train_loss.item())
+
                 #self.accuracy.append(accuracy_evaluator.evaluate())
             if epoch % 100 == 0 or epoch == self.max_epoch - 1:
                 accuracy_evaluator.data = {'true_y': y_true, 'pred_y': y_pred.max(1)[1]}
                 print('Epoch:', epoch + 1, 'Accuracy:', accuracy_evaluator.evaluate(), 'Loss:', train_loss.item())
+            self.training_loss.append(train_loss.item())
+
+        """for epoch in range(self.max_epoch):
+            # Forward step
+            y_pred = self.forward(X)
+
+            # Calculate the training loss
+            y_true = y
+            train_loss = self.loss_function(y_pred, y_true)
+            self.optimizer.zero_grad()
+            # Backward step: error backpropagation
+            train_loss.backward()
+
+            # Update the variables according to the optimizer and the gradients calculated by the above loss function
+            self.optimizer.step()
+            self.training_loss.append(train_loss.item())
+            # self.accuracy.append(accuracy_evaluator.evaluate())
+            if epoch % 100 == 0 or epoch == self.max_epoch - 1:
+                accuracy_evaluator.data = {'true_y': y_true, 'pred_y': y_pred.max(1)[1]}
+                print('Epoch:', epoch + 1, 'Accuracy:', accuracy_evaluator.evaluate(), 'Loss:', train_loss.item())"""
 
     # Test function
     def test(self, X):
