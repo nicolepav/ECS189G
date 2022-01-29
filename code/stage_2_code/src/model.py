@@ -1,15 +1,15 @@
- '''
+'''
 MethodModule class for Multi-Layer Perceptron model on Classification Task
 '''
 
 # Copyright (c) 2022-Current Jialiang Wang <jilwang804@gmail.com>
 # License: TBD
 
-import torch
+import torch, sklearn
 from torch import nn
 from .base.method import method
 from .evaluation import Evaluate_Accuracy
-
+from sklearn.metrics import classification_report
 
 class MLP(method, nn.Module):
     '''
@@ -52,7 +52,7 @@ class MLP(method, nn.Module):
         minibatch = 2000
         accuracy_evaluator = Evaluate_Accuracy('training evaluator', '')
 
-        # An iterative gradient updating process without mini-batch
+        # An iterative gradient updating process with mini-batch
         for epoch in range(self.max_epoch):
             # mini-batch
             for i in range(0, X.shape[0], minibatch):
@@ -76,6 +76,9 @@ class MLP(method, nn.Module):
                 accuracy_evaluator.data = {'true_y': y_true, 'pred_y': y_pred.max(1)[1]}
                 print('Epoch:', epoch + 1, 'Accuracy:', accuracy_evaluator.evaluate(), 'Loss:', train_loss.item())
 
+        # ---- Performance Metrics------------------------------
+        print(classification_report(y_true, y_pred.max(1)[1]))
+
     # Test function
     def test(self, X):
         # Forward step
@@ -84,6 +87,9 @@ class MLP(method, nn.Module):
         # Handling output layer activation: softmax:
         # Convert the probability distributions to the corresponding labels
         # Instances will get the labels corresponding to the largest probability
+
+        # ---- Performance Metrics------------------------------
+        print(classification_report(self.data['test']['y'], y_pred.max(1)[1]))
         return y_pred.max(1)[1]
 
     # Run function
