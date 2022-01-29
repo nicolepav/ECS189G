@@ -1,4 +1,4 @@
-'''
+''
 TBD
 '''
 
@@ -35,22 +35,22 @@ if 1:
     # ---- Objection Initialization Section ---------------
     data_obj = Dataset_Loader('Testing Set',
                                    '10,000 lines: label {0, 1, 2, ..., 9}, feature_1, feature_2, ..., feature_784')
-    data_obj.dataset_source_folder_path = 'data/'
+    data_obj.dataset_source_folder_path = 'code/stage_2_code/data/'
     data_obj.dataset_source_file_name = 'test.csv'
 
     layers_data = [
         (10, nn.ReLU),
         (10, nn.Softmax)
     ]
-    method_obj = MLP(784, layers_data, 1e-3, torch.optim.Adam, nn.CrossEntropyLoss(), 500)
+    method_obj = MLP(784, layers_data, 1e-3, torch.optim.Adam, nn.CrossEntropyLoss(), 500, [])
     method_obj.load_state_dict(torch.load(pth_path))
 
     result_obj = Result_Saver('Prediction saver', '')
-    result_obj.result_destination_folder_path = 'result/'
+    result_obj.result_destination_folder_path = 'code/stage_2_code/result/'
     result_obj.result_destination_file_name = 'MLP_prediction_result'
 
     setting_obj = Setting_Test('Testing', '')
-
+    #setting_obj = Setting_KFold_CV()
     evaluate_obj = Evaluate_Accuracy('Accuracy', '')
     # ------------------------------------------------------
 
@@ -63,4 +63,4 @@ if 1:
     print('MLP Accuracy: ' + str(score))
     print('************ Finish ************')
     # ------------------------------------------------------
-
+    print(method_obj.training_loss)

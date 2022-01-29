@@ -16,7 +16,6 @@ import numpy as np
 import torch
 from torch import nn
 
-
 #---- Multi-Layer Perceptron Script ----
 if 1:
     #---- Parameter Section -------------------------------
@@ -39,14 +38,15 @@ if 1:
     ]
 
     # Usage: MLP(input_size, layers_data, learning_rate, optimizer, loss_function, epoch)
-    method_obj = MLP(784, layers_data, 1e-3, torch.optim.Adam, nn.CrossEntropyLoss(), 500)
+    method_obj = MLP(784, layers_data, 1e-3, torch.optim.Adam, nn.CrossEntropyLoss(), 500, [])
 
     result_obj = Result_Saver('Model saver', '')
-    result_obj.result_destination_folder_path = 'result/'
+    result_obj.result_destination_folder_path = 'code/stage_2_code/result/'
     result_obj.result_destination_file_name = 'MLP_model'
 
     setting_obj = Setting_KFold_CV('K Fold Cross Validation', '')
     # Not supported: setting_obj = Setting_Train_Test_Split('Train Test Split', '')
+
 
     evaluate_obj = Evaluate_Accuracy('Accuracy', '')
     # ------------------------------------------------------
@@ -60,4 +60,4 @@ if 1:
     print('MLP Accuracy: ' + str(mean_score) + ' +/- ' + str(std_score))
     print('************ Finish ************')
     # ------------------------------------------------------
-
+    #print(method_obj.training_loss)
