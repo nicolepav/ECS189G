@@ -9,13 +9,18 @@ from src.dataset_loader import Dataset_Loader
 from src.model import CNN
 from src.result_saver import Result_Saver
 from src.evaluation import Evaluate_Accuracy
+from torchvision import datasets
+from torchvision.transforms import ToTensor
+from torch.utils.data import DataLoader
+from torch import nn
 import numpy as np
 import sys
 import torch
-from torch import nn
+import matplotlib.pyplot as plt
 
 
-#---- Convolutional Neural Network Script ----
+
+#---- Convolutional Neural Network Script MODIFIED FOR MNIST----
 if 1:
     if len(sys.argv) != 2:
         print("Usage: python train.py [dataset_path]")
@@ -32,48 +37,52 @@ if 1:
     # ------------------------------------------------------
 
     # ---- Objection Initialization Section ---------------
-    train_data_obj = Dataset_Loader('Training Set', 'TBD', dataset_path)
-    test_data_obj = Dataset_Loader('Testing Set', 'TBD', dataset_path)
+    train_data_obj = Dataset_Loader('MNIST', 'Grayscale Handwritten Numbers', dataset_path)
+    test_data_obj = Dataset_Loader('MNIST', 'Grayscale Handwritten Numbers', dataset_path)
     train_data_obj.load(train=True)
     test_data_obj.load(train=False)
 
-    # Default setting for CIFAR dataset
-    in_channels = 3             # 1 for grayscale, 3 for color RGB
+    # MNIST
+    in_channels = 1             # 1 for MNIST
     num_classes = 10
     layers_data = [             # Baseline: AlexNet
-        # Layer 1       32 * 32 * 3
-        nn.Conv2d(in_channels, 6, kernel_size=3, stride=1, padding=1, dilation=1),  # (32 + 2 - 3) / 1 + 1 = 32
-        nn.ReLU(),
-        nn.MaxPool2d(kernel_size=2, stride=2, padding=0),                           # (32 - 2) / 2 + 1 = 16
 
-        # Layer 2       16 * 16 * 6
-        nn.Conv2d(6, 16, kernel_size=3, stride=1, padding=1, dilation=1),           # (16 - 3 + 2) / 1 + 1 = 16
+        # Layer 1       28 * 28 * 1     P:1 S:1 K:3 O:32
+        # Output        28 x 28 x 32
+        nn.Conv2d(in_channels, 32, kernel_size=3, stride=1, padding=1, dilation=1),
         nn.ReLU(),
-        nn.MaxPool2d(kernel_size=2, stride=2, padding=0),                           # (16 - 2) / 2 + 1 = 8
+        nn.MaxPool2d(kernel_size=2, stride=2),                                      # (28 - 2) / 2 + 1 = 14
 
-        # Layer 3       8 * 8 * 16
-        nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1, dilation=1),          # (8 - 3 + 2) / 1 + 1 = 8
+        # Layer 2       14 * 14 * 32    P:1 S:1 K:3 O:32
+        # Output        07 * 07 * 64
+        nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1, dilation=1),          #
         nn.ReLU(),
-        nn.MaxPool2d(kernel_size=2, stride=2, padding=0),                           # (8 - 2) / 2 + 1 = 4
+        nn.MaxPool2d(kernel_size=2, stride=2),                                      # (14 - 2) / 2 + 1 = 7
 
-        # Layer 4       4 * 4 * 64
-        nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1, dilation=1),          # (4 - 3 + 2) / 1 + 1 = 4
-        nn.ReLU(),
-        nn.MaxPool2d(kernel_size=2, stride=2, padding=0),                           # (4 - 2) / 2 + 1 = 2
-
-        # Layer 5       2 * 2 * 128
-        nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1, dilation=1),         # (2 - 3 + 2) / 1 + 1 = 2
-        nn.ReLU(),
-        nn.MaxPool2d(kernel_size=2, stride=2, padding=0),                           # (2 - 2) / 2 + 1 = 1
+        # # Layer 3       7 * 7 * 64
+        # nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1, dilation=1),          # (8 - 3 + 2) / 1 + 1 = 8
+        # nn.ReLU(),
+        # nn.MaxPool2d(kernel_size=2, stride=2, padding=0),                           # (8 - 2) / 2 + 1 = 4
+        #
+        # # Layer 4       4 * 4 * 64
+        # nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1, dilation=1),          # (4 - 3 + 2) / 1 + 1 = 4
+        # nn.ReLU(),
+        # nn.MaxPool2d(kernel_size=2, stride=2, padding=0),                           # (4 - 2) / 2 + 1 = 2
+        #
+        # # Layer 5       2 * 2 * 128
+        # nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1, dilation=1),         # (2 - 3 + 2) / 1 + 1 = 2
+        # nn.ReLU(),
+        # nn.MaxPool2d(kernel_size=2, stride=2, padding=0),                           # (2 - 2) / 2 + 1 = 1
 
         # fc Layer (dense layer)
         # Before the dense layer, need to flatten all dimensions except batch
         # This is down in the model.py (keep in mind)
-        nn.Linear(128, 120),
+        nn.Linear(7*7*64, 128),
         nn.ReLU(),
-        nn.Linear(120, 84),
+        nn.Linear(128, 10),
         nn.ReLU(),
-        nn.Linear(84, num_classes)
+        # nn.Linear(84, num_classes)
+        nn.Dropout(p=0.5)
     ]
 
     # Usage: CNN(layers_data, learning_rate, epoch, batch, optimizer, loss_function, device)
@@ -87,9 +96,13 @@ if 1:
 
     # ---- Running Section ---------------------------------
     print('************ Start ************')
-    X_train = torch.FloatTensor(train_data_obj.data['X']).permute(0, 3, 1, 2)
+
+    # temp = torch.FloatTensor(train_data_obj.data['X'])
+    # print(temp)
+
+    X_train = torch.FloatTensor(train_data_obj.data['X']).reshape(60000, 1, 28, 28)
     y_train = torch.LongTensor(train_data_obj.data['y'])
-    X_test = torch.FloatTensor(test_data_obj.data['X']).permute(0, 3, 1, 2)
+    X_test = torch.FloatTensor(test_data_obj.data['X']).reshape(10000, 1, 28, 28)
     y_test = torch.LongTensor(test_data_obj.data['y'])
 
     # GPU
