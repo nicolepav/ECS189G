@@ -21,12 +21,12 @@ if 1:
         exit(1)
     dataset_path = sys.argv[1]
     pth_path = sys.argv[2]
+    print("python", dataset_path, pth_path)
 
     # ---- Parameter Section -------------------------------
     use_cuda = torch.cuda.is_available()
     np.random.seed(48)
     torch.manual_seed(48)
-    use_cuda = False
     if use_cuda:
         torch.cuda.manual_seed(48)
     device = torch.device('cuda:0' if use_cuda else 'cpu')
