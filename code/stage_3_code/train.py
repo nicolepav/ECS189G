@@ -14,7 +14,7 @@ import sys
 import torch
 from torch import nn
 
-
+training_loss = []
 #---- Convolutional Neural Network Script ----
 if 1:
     if len(sys.argv) != 2:
@@ -39,7 +39,7 @@ if 1:
 
     # Default setting for CIFAR dataset
     in_channels = 3             # 1 for grayscale, 3 for color RGB
-    num_classes = 10
+    num_classes = 40
     layers_data = [             # Baseline: AlexNet
         # Layer 1       32 * 32 * 3
         nn.Conv2d(in_channels, 6, kernel_size=3, stride=1, padding=1, dilation=1),  # (32 + 2 - 3) / 1 + 1 = 32
@@ -69,24 +69,25 @@ if 1:
         # fc Layer (dense layer)
         # Before the dense layer, need to flatten all dimensions except batch
         # This is down in the model.py (keep in mind)
-        nn.Linear(128, 120),
         nn.ReLU(),
-        nn.Linear(120, 84),
+        nn.Linear(768, 600),
         nn.ReLU(),
-        nn.Linear(84, num_classes)
+        nn.Linear(600, 400),
+        nn.ReLU(),
+        nn.Linear(400, 200),
+        nn.ReLU(),
+        nn.Linear(200, num_classes+1)
     ]
 
     # Usage: CNN(layers_data, learning_rate, epoch, batch, optimizer, loss_function, device)
-    method_obj = CNN(layers_data, 1e-3, 60, 32, torch.optim.Adam, nn.CrossEntropyLoss(), device)
-
+    method_obj = CNN(layers_data, 1e-3, 70, 32, torch.optim.Adam, nn.CrossEntropyLoss(), device, training_loss)
     result_obj = Result_Saver('Model saver', '')
     result_obj.result_destination_file_path = 'result/CNN_model.pth'
 
     evaluate_obj = Evaluate_Accuracy('Accuracy', '')
     # ------------------------------------------------------
 
-    # ---- Running Section ---------------------------------
-    print('************ Start ************')
+    print('************ Start Testing ************')
     X_train = torch.FloatTensor(train_data_obj.data['X']).permute(0, 3, 1, 2)
     y_train = torch.LongTensor(train_data_obj.data['y'])
     X_test = torch.FloatTensor(test_data_obj.data['X']).permute(0, 3, 1, 2)
@@ -111,5 +112,4 @@ if 1:
     print('************ Overall Performance ************')
     print('CNN Accuracy: ' + str(score))
     print('************ Finish ************')
-    # ------------------------------------------------------
-
+    print(method_obj.training_loss)
