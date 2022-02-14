@@ -43,33 +43,43 @@ if 1:
     test_data_obj.load(train=False)
 
     # MNIST
-    # https://pytorch.org/tutorials/beginner/blitz/neural_networks_tutorial.html
+    # Based on AlexNet
     in_channels = 1  # 1 for grayscale, 3 for color RGB
-    layers_data = [
-
-
-        nn.Conv2d(1, 6, kernel_size=(5, 5), padding='same'),
+    num_classes = 10
+    layers_data = [  # Baseline: AlexNet
+        # Layer 1       32 * 32 * 3
+        nn.Conv2d(in_channels, 6, kernel_size=3, stride=1, padding=1, dilation=1),  # (32 + 2 - 3) / 1 + 1 = 32
         nn.ReLU(),
-        nn.MaxPool2d(kernel_size=2, stride=2, padding=0),
+        nn.MaxPool2d(kernel_size=2, stride=2, padding=0),  # (32 - 2) / 2 + 1 = 16
 
-        nn.Conv2d(6, 16, kernel_size=(5, 5)),
+        # Layer 2       16 * 16 * 6
+        nn.Conv2d(6, 16, kernel_size=3, stride=1, padding=1, dilation=1),  # (16 - 3 + 2) / 1 + 1 = 16
         nn.ReLU(),
-        nn.MaxPool2d(kernel_size=2, stride=2, padding=0),
+        nn.MaxPool2d(kernel_size=2, stride=2, padding=0),  # (16 - 2) / 2 + 1 = 8
 
-        nn.Linear(400, 120),
+        # Layer 3       8 * 8 * 16
+        nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1, dilation=1),  # (8 - 3 + 2) / 1 + 1 = 8
+        nn.ReLU(),
+        nn.MaxPool2d(kernel_size=2, stride=2, padding=0),  # (8 - 2) / 2 + 1 = 4
+
+        # Layer 4       4 * 4 * 64
+        nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1, dilation=1),  # (4 - 3 + 2) / 1 + 1 = 4
+        nn.ReLU(),
+        nn.MaxPool2d(kernel_size=2, stride=2, padding=0),  # (4 - 2) / 2 + 1 = 2
+
+        # fc Layer (dense layer)
+        # Before the dense layer, need to flatten all dimensions except batch
+        # This is down in the model.py (keep in mind)
+        nn.Linear(64, 120),
         nn.ReLU(),
         nn.Linear(120, 84),
         nn.ReLU(),
-        # nn.Softmax(dim=1),
-        nn.Linear(84, 10),
-        nn.ReLU(),
-        nn.Dropout(0.25)
-        # nn.Softmax(dim=1)
-
+        nn.Linear(84, num_classes),
+        nn.Dropout(0.15)
     ]
 
     # Usage: CNN(layers_data, learning_rate, epoch, batch, optimizer, loss_function, device)
-    method_obj = CNN(layers_data, 1e-3, 60, 100, torch.optim.Adam, nn.CrossEntropyLoss(), device)
+    method_obj = CNN(layers_data, 1e-3, 30, 64, torch.optim.Adam, nn.CrossEntropyLoss(), device)
 
     result_obj = Result_Saver('Model saver', '')
     result_obj.result_destination_file_path = 'result/CNN_model.pth'
@@ -83,9 +93,9 @@ if 1:
     # temp = torch.FloatTensor(train_data_obj.data['X'])
     # print(temp)
 
-    X_train = torch.FloatTensor(train_data_obj.data['X']).reshape(60000, 1, 28, 28)/255
+    X_train = torch.FloatTensor(train_data_obj.data['X']).reshape(-1, 1, 28, 28)
     y_train = torch.LongTensor(train_data_obj.data['y'])
-    X_test = torch.FloatTensor(test_data_obj.data['X']).reshape(10000, 1, 28, 28)/255
+    X_test = torch.FloatTensor(test_data_obj.data['X']).reshape(-1, 1, 28, 28)
     y_test = torch.LongTensor(test_data_obj.data['y'])
 
     # GPU
