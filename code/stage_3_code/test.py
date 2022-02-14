@@ -26,6 +26,7 @@ if 1:
     use_cuda = torch.cuda.is_available()
     np.random.seed(48)
     torch.manual_seed(48)
+    use_cuda = False
     if use_cuda:
         torch.cuda.manual_seed(48)
     device = torch.device('cuda:0' if use_cuda else 'cpu')
@@ -160,7 +161,7 @@ if 1:
 
     # Run CNN model
     method_obj.data = {'test': {'X': X_test, 'y': y_test}}
-    testing_result = method_obj.run()
+    testing_result = {'pred_y': method_obj.test(method_obj.data['test']['X']), 'true_y': method_obj.data['test']['y']}
 
     # Evaluate predication result
     evaluate_obj.data = testing_result
@@ -170,5 +171,4 @@ if 1:
     print('CNN Accuracy: ' + str(score))
     print('************ Finish ************')
     # ------------------------------------------------------
-
 
