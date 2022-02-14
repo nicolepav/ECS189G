@@ -19,8 +19,8 @@ import torch
 import matplotlib.pyplot as plt
 
 
+# ---- Convolutional Neural Network Script MODIFIED FOR MNIST----
 
-#---- Convolutional Neural Network Script MODIFIED FOR MNIST----
 if 1:
     if len(sys.argv) != 2:
         print("Usage: python train.py [dataset_path]")
@@ -47,40 +47,29 @@ if 1:
     in_channels = 1  # 1 for grayscale, 3 for color RGB
     layers_data = [
 
-        # LeNet
-        # input image size: 28
-        # padding: 0
-        # kernel matrix size: 5
-        # stride 1
-        # output of CNN (28-5) + 1 = 28 x 28 x 6
-        # pooling layer (28 - 2)/2 + 1 = 14 x 14 x 6
+
         nn.Conv2d(1, 6, kernel_size=(5, 5), padding='same'),
         nn.ReLU(),
         nn.MaxPool2d(kernel_size=2, stride=2, padding=0),
 
-        # Layer 2
-        # output of CNN (14-5) + 1 = 10 x 10 x 6
-        # pooling layer (10 - 2)/2 + 1 = 6 x 6 x 16
         nn.Conv2d(6, 16, kernel_size=(5, 5)),
         nn.ReLU(),
         nn.MaxPool2d(kernel_size=2, stride=2, padding=0),
 
-
-        # fc Layer (dense layer)
-        # Before the dense layer, need to flatten all dimensions except batch
-        # This is down in the model.py (keep in mind)
-        # nn.Flatten(),
         nn.Linear(400, 120),
         nn.ReLU(),
         nn.Linear(120, 84),
-        nn.Softmax(dim=1),
+        nn.ReLU(),
+        # nn.Softmax(dim=1),
         nn.Linear(84, 10),
-        nn.Softmax(dim=1)
+        nn.ReLU(),
+        nn.Dropout(0.25)
+        # nn.Softmax(dim=1)
 
     ]
 
     # Usage: CNN(layers_data, learning_rate, epoch, batch, optimizer, loss_function, device)
-    method_obj = CNN(layers_data, 1e-3, 60, 32, torch.optim.Adam, nn.CrossEntropyLoss(), device)
+    method_obj = CNN(layers_data, 1e-3, 60, 100, torch.optim.Adam, nn.CrossEntropyLoss(), device)
 
     result_obj = Result_Saver('Model saver', '')
     result_obj.result_destination_file_path = 'result/CNN_model.pth'
@@ -94,9 +83,9 @@ if 1:
     # temp = torch.FloatTensor(train_data_obj.data['X'])
     # print(temp)
 
-    X_train = torch.FloatTensor(train_data_obj.data['X']).reshape(60000, 1, 28, 28)
+    X_train = torch.FloatTensor(train_data_obj.data['X']).reshape(60000, 1, 28, 28)/255
     y_train = torch.LongTensor(train_data_obj.data['y'])
-    X_test = torch.FloatTensor(test_data_obj.data['X']).reshape(10000, 1, 28, 28)
+    X_test = torch.FloatTensor(test_data_obj.data['X']).reshape(10000, 1, 28, 28)/255
     y_test = torch.LongTensor(test_data_obj.data['y'])
 
     # GPU
