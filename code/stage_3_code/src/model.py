@@ -18,7 +18,7 @@ class CNN(method, nn.Module):
     '''
 
     # Initialization function
-    def __init__(self, layers_data, learning_rate=0.001, epoch=100, batch=5, optimizer=torch.optim.Adam,
+    def __init__(self, layers_data, learning_rate=0.001, epoch=10, batch=5, optimizer=torch.optim.Adam,
                  loss_function=nn.CrossEntropyLoss(), device='cpu'):
         super(CNN, self).__init__("Multi-Layer Perceptron", "Classification Task")
         nn.Module.__init__(self)

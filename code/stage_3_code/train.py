@@ -43,46 +43,40 @@ if 1:
     test_data_obj.load(train=False)
 
     # MNIST
-    in_channels = 1             # 1 for MNIST
-    num_classes = 10
-    layers_data = [             # Baseline: AlexNet
+    # https://pytorch.org/tutorials/beginner/blitz/neural_networks_tutorial.html
+    in_channels = 1  # 1 for grayscale, 3 for color RGB
+    layers_data = [
 
-        # Layer 1       28 * 28 * 1     P:1 S:1 K:3 O:32
-        # Output        28 x 28 x 32
-        nn.Conv2d(in_channels, 32, kernel_size=3, stride=1, padding=1, dilation=1),
+        # LeNet
+        # input image size: 28
+        # padding: 0
+        # kernel matrix size: 5
+        # stride 1
+        # output of CNN (28-5) + 1 = 28 x 28 x 6
+        # pooling layer (28 - 2)/2 + 1 = 14 x 14 x 6
+        nn.Conv2d(1, 6, kernel_size=(5, 5), padding='same'),
         nn.ReLU(),
-        nn.MaxPool2d(kernel_size=2, stride=2),                                      # (28 - 2) / 2 + 1 = 14
+        nn.MaxPool2d(kernel_size=2, stride=2, padding=0),
 
-        # Layer 2       14 * 14 * 32    P:1 S:1 K:3 O:32
-        # Output        07 * 07 * 64
-        nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1, dilation=1),          #
+        # Layer 2
+        # output of CNN (14-5) + 1 = 10 x 10 x 6
+        # pooling layer (10 - 2)/2 + 1 = 6 x 6 x 16
+        nn.Conv2d(6, 16, kernel_size=(5, 5)),
         nn.ReLU(),
-        nn.MaxPool2d(kernel_size=2, stride=2),                                      # (14 - 2) / 2 + 1 = 7
+        nn.MaxPool2d(kernel_size=2, stride=2, padding=0),
 
-        # # Layer 3       7 * 7 * 64
-        # nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1, dilation=1),          # (8 - 3 + 2) / 1 + 1 = 8
-        # nn.ReLU(),
-        # nn.MaxPool2d(kernel_size=2, stride=2, padding=0),                           # (8 - 2) / 2 + 1 = 4
-        #
-        # # Layer 4       4 * 4 * 64
-        # nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1, dilation=1),          # (4 - 3 + 2) / 1 + 1 = 4
-        # nn.ReLU(),
-        # nn.MaxPool2d(kernel_size=2, stride=2, padding=0),                           # (4 - 2) / 2 + 1 = 2
-        #
-        # # Layer 5       2 * 2 * 128
-        # nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1, dilation=1),         # (2 - 3 + 2) / 1 + 1 = 2
-        # nn.ReLU(),
-        # nn.MaxPool2d(kernel_size=2, stride=2, padding=0),                           # (2 - 2) / 2 + 1 = 1
 
         # fc Layer (dense layer)
         # Before the dense layer, need to flatten all dimensions except batch
         # This is down in the model.py (keep in mind)
-        nn.Linear(7*7*64, 128),
+        # nn.Flatten(),
+        nn.Linear(400, 120),
         nn.ReLU(),
-        nn.Linear(128, 10),
-        nn.ReLU(),
-        # nn.Linear(84, num_classes)
-        nn.Dropout(p=0.5)
+        nn.Linear(120, 84),
+        nn.Softmax(dim=1),
+        nn.Linear(84, 10),
+        nn.Softmax(dim=1)
+
     ]
 
     # Usage: CNN(layers_data, learning_rate, epoch, batch, optimizer, loss_function, device)
