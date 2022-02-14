@@ -80,7 +80,7 @@ if 1:
     method_obj = CNN(layers_data, 1e-3, 60, 32, torch.optim.Adam, nn.CrossEntropyLoss(), device)
 
     result_obj = Result_Saver('Model saver', '')
-    result_obj.result_destination_file_path = 'result/CNN_model.pth'
+    result_obj.result_destination_file_path = 'result/CNN_model'
 
     evaluate_obj = Evaluate_Accuracy('Accuracy', '')
     # ------------------------------------------------------
