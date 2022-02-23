@@ -1,0 +1,1 @@
+This is the vector cache for vocab such as glove.6B.100d. During your first time running train.py, this will be generated (takes some time and space).
