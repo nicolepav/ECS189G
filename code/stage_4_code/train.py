@@ -13,6 +13,7 @@ from src.evaluation import Evaluate_Accuracy
 import numpy as np
 import sys
 import torch
+import matplotlib.pyplot as plt
 from torch import nn
 from torchtext.legacy.data import BucketIterator
 from os.path import exists
@@ -47,12 +48,12 @@ if 1:
 
     # Default setting
     vocab_size = len(data_obj.text_field.vocab)
-    n_layers = 2
+    n_layers = 3
     embedding_dim = 100
     hidden_dim = 256
     output_dim = 1
-    epoch = 10
-    batch_size = 32
+    epoch = 5
+    batch_size = 64
     learning_rate = 0.001
     loss_function = nn.BCELoss()
     optimizer = torch.optim.Adam
@@ -85,6 +86,13 @@ if 1:
 
     # Run LSTM model
     train(method_obj, train_iter)
+    plt.figure(figsize=(10, 5))
+    plt.title("Training Loss")
+    plt.plot(method_obj.training_loss)
+    plt.xlabel("Epoch")
+    plt.ylabel("Loss")
+    plt.show()
+
     score = test(method_obj, test_iter)
 
     # Save learned model's parameters
