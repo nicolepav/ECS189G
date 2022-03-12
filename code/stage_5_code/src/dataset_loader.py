@@ -100,11 +100,11 @@ class Dataset_Loader(dataset):
 
         # the following train, test, val index are just examples, sample the train, test according to project requirements
         if self.dataset_name == 'cora':
-            idx_train, idx_test, idx_val = self.generate_balanced_samples(idx, labels, idx_map, 7, 140, 1400, 280)
+            idx_train, idx_test, idx_val = self.generate_balanced_samples(idx, labels, idx_map, 7, 140, 1400, 200)
         elif self.dataset_name == 'citeseer':
-            idx_train, idx_test, idx_val = self.generate_balanced_samples(idx, labels, idx_map, 6, 120, 1200, 240)
+            idx_train, idx_test, idx_val = self.generate_balanced_samples(idx, labels, idx_map, 6, 120, 1200, 200)
         elif self.dataset_name == 'pubmed':
-            idx_train, idx_test, idx_val = self.generate_balanced_samples(idx, labels, idx_map, 3, 60, 600, 120)
+            idx_train, idx_test, idx_val = self.generate_balanced_samples(idx, labels, idx_map, 3, 60, 600, 200)
         else:
             print("The specified dataset does not have a predetermined training testing set partition")
             print("Please refer to src/dataset_loader.py to manually change it")

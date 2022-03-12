@@ -75,13 +75,13 @@ def train(model, data_obj, fast_mode):
         # Update the variables according to the optimizer and the gradients calculated by the above loss function
         model.optimizer.step()
 
-        print('Epoch:', epoch + 1, 'Train Accuracy:', evaluate_accuracy(y_pred[idx_train], labels[idx_train]).item(),
-              'Train Loss:', train_loss.item())
+        # print('Epoch:', epoch + 1, 'Train Accuracy:', evaluate_accuracy(y_pred[idx_train], labels[idx_train]).item(),
+        #       'Train Loss:', train_loss.item())
         if not fast_mode:
             # Evaluate validation set performance separately, deactivates dropout during validation run.
             model.eval()
             valid_pred = model(features, adj)
-            print('Validation Accuracy:', evaluate_accuracy(valid_pred[idx_val], labels[idx_val]).item())
+            # print('Validation Accuracy:', evaluate_accuracy(valid_pred[idx_val], labels[idx_val]).item())
         model.training_loss.append(train_loss.item())
 
     # ---- Performance Metrics------------------------------

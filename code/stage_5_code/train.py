@@ -60,13 +60,13 @@ if 1:
 
     # ---- Parameter Section -------------------------------
     n_feat = data_obj.data['graph']['X'].shape[1]
-    n_hid = 16
+    n_hid = 26
     n_class = data_obj.data['graph']['y'].max().item() + 1
     dropout = 0.5
     epoch = 200
     loss_function = fun.nll_loss
     optimizer = torch.optim.Adam
-    learning_rate = 0.01
+    learning_rate = 0.025
     weight_decay = 5e-4
     # ------------------------------------------------------
 

@@ -1,2 +1,9 @@
 data
 data/**/
+code/stage_5_code/dataset
+code/stage_5_code/dataset/
+code/stage_5_code/dataset/**/
+code/stage_5_code/dataset/pubmed
+code/stage_5_code/dataset/citeseer
+code/stage_5_code/dataset/cora
+code/stage_5_code/dataset/
