@@ -38,9 +38,10 @@ class GCN(method, nn.Module):
         self.training_loss = []
 
     # Forward propagation function
-    # relu –> dropout –> gc2 –> log softmax
+    # gc1 –> dropout –> gc2 –> log softmax
     def forward(self, x, adj):
-        x = fun.relu(self.gc1(x, adj))
+        x = self.gc1(x, adj)
+        # x = fun.leaky_relu(self.gc1(x, adj))
         x = fun.dropout(x, self.dropout, training=self.training)
         x = self.gc2(x, adj)
 
