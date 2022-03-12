@@ -60,14 +60,14 @@ if 1:
 
     # ---- Parameter Section -------------------------------
     n_feat = data_obj.data['graph']['X'].shape[1]
-    n_hid = 16
+    n_hid = 36
     n_class = data_obj.data['graph']['y'].max().item() + 1
-    dropout = 0.5
+    dropout = 0.5 #0.5
     epoch = 200
     loss_function = fun.nll_loss
-    optimizer = torch.optim.Adam
+    optimizer = torch.optim.Adam #adam
     learning_rate = 0.01
-    weight_decay = 5e-4
+    weight_decay = 5e-4# 5e-4
     # ------------------------------------------------------
 
     # ---- Training Section --------------------------------
@@ -93,13 +93,7 @@ if 1:
     result_obj.data = model.state_dict()
     result_obj.save_learned_model()
 
-    # Training loss plot
-    plt.figure(figsize=(10, 5))
-    plt.title("Training Loss")
-    plt.plot(model.training_loss)
-    plt.xlabel("Epoch")
-    plt.ylabel("Loss")
-    plt.show()
+
 
     print('************ Training End **************')
     # ------------------------------------------------------
@@ -112,3 +106,10 @@ if 1:
     print('************ Finish ********************')
     # ------------------------------------------------------
 
+ # Training loss plot
+    plt.figure(figsize=(10, 5))
+    plt.title("Training Loss")
+    plt.plot(model.training_loss)
+    plt.xlabel("Epoch")
+    plt.ylabel("Loss")
+    plt.show()
